@@ -24,6 +24,7 @@ export default function moveHandler(socket, msg) {
         reason: "completed",
         winner: winner,
       });
+      delete gameBoards[players[socket.id].boardId];
     }
 
     if (board.isDraw()) {

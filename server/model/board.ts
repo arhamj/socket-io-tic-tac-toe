@@ -1,8 +1,13 @@
 export default class Board {
+  boardState: string[];
+  isXTurn: boolean;
+  winner?: string;
+  moveCount: number;
+
   constructor() {
     this.boardState = [".", ".", ".", ".", ".", ".", ".", ".", "."];
     this.isXTurn = true;
-    this.winner = null;
+    this.winner = undefined;
     this.moveCount = 0;
   }
 
@@ -20,7 +25,7 @@ export default class Board {
     return output;
   }
 
-  move(symbol, position) {
+  move(symbol: string, position: number) {
     if (this.isXTurn && symbol != "X") {
       throw "wait for your turn";
     } else if (!this.isXTurn && symbol != "O") {

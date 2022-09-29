@@ -1,6 +1,7 @@
 .PHONY: server
 server:
-	node server/server.js 5050
+	npm run build
+	node build/server.js 5050
 
 .PHONY: client
 client:

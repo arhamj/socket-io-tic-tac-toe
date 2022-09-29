@@ -1,21 +1,13 @@
-import {
-  players,
-  waitingPlayer,
-  setWaitingPlayer,
-  gameBoards,
-} from "../state.js";
+import { players, waitingPlayer, setWaitingPlayer, gameBoards } from "../state";
 import crypto from "crypto";
-import Board from "../model/board.js";
+import Board from "../model/board";
+import { Socket } from "socket.io";
+import Player from "../model/player";
 
-function addPlayer(socket) {
-  players[socket.id] = {
-    opponent: waitingPlayer,
-    symbol: "X",
-    socket: socket,
-    boardId: null,
-  };
+function addPlayer(socket: Socket) {
+  players[socket.id] = new Player(waitingPlayer, "X", socket);
 
-  if (waitingPlayer) {
+  if (waitingPlayer==="") {
     let gameBoardId = crypto.randomBytes(20).toString("hex");
     players[socket.id].symbol = "O";
     players[socket.id].boardId = gameBoardId;
@@ -25,14 +17,14 @@ function addPlayer(socket) {
 
     alertPlayersOnSuccessfulMatch(socket);
 
-    setWaitingPlayer(null);
+    setWaitingPlayer("");
   } else {
     setWaitingPlayer(socket.id);
   }
 }
 
-function alertPlayersOnSuccessfulMatch(socket) {
-  var opponentSocket = getOpponent(socket, players);
+function alertPlayersOnSuccessfulMatch(socket: Socket) {
+  var opponentSocket = getOpponent(socket);
   let playerNumberStr = players[socket.id].symbol === "X" ? "first" : "second";
   let opponentPlayerNumberStr =
     playerNumberStr === "first" ? "second" : "first";
@@ -44,9 +36,9 @@ function alertPlayersOnSuccessfulMatch(socket) {
   });
 }
 
-function getOpponent(socket) {
+function getOpponent(socket: Socket): Socket {
   if (!players[socket.id].opponent) {
-    return;
+    throw "opponent socket not found";
   }
   return players[players[socket.id].opponent].socket;
 }
